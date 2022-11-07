@@ -1,6 +1,4 @@
-# Solidity API
-
-## Euthenian_Sentinel
+# Euthenian Sentinel
 
 ### _tokenIds
 
@@ -126,7 +124,7 @@ event changePermitMint(bool _state)
 event _withdrawMoney(address _user, uint256 _amount, uint256 _date)
 ```
 
-### checkBurn
+## checkBurn
 
 ```solidity
 modifier checkBurn()
@@ -134,7 +132,7 @@ modifier checkBurn()
 
 _Check if Nft can be burned_
 
-### checkMint
+## checkMint
 
 ```solidity
 modifier checkMint()
@@ -142,22 +140,22 @@ modifier checkMint()
 
 _Check if Nft can be minted_
 
-### constructor
+## constructor
 
 ```solidity
 constructor(string _name, string _symbol, string _baseURI, address _royaltyAddress) public
 ```
 
-#### Parameters
+### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _name | string | Collection Name         @param _symbol Collection Symbol         @param _baseURI ISPF URL         @param _royaltyAddress Address where the royalties will be sent |
-| _symbol | string |  |
-| _baseURI | string |  |
-| _royaltyAddress | address |  |
+| _name | string | Collection Name |
+| _symbol | string | Collection Symbol  |
+| _baseURI | string | ISPF URL |
+| _royaltyAddress | address | Address where the royalties will be sent |
 
-### tokenURI
+## tokenURI
 
 ```solidity
 function tokenURI(uint256 tokenId) public view returns (string)
@@ -165,7 +163,7 @@ function tokenURI(uint256 tokenId) public view returns (string)
 
 _Returns the custom ISPF URL of each token_
 
-### mint
+## mint
 
 ```solidity
 function mint(uint256 _amountForMint) public payable
@@ -173,7 +171,7 @@ function mint(uint256 _amountForMint) public payable
 
 Function that allows users to mint NFT, the user must pay an amount for each NFT
 
-### burn
+## burn
 
 ```solidity
 function burn(uint256 _tokenId) public virtual
@@ -181,7 +179,7 @@ function burn(uint256 _tokenId) public virtual
 
 Function that allows users, owners or with permissions, to burn NFT
 
-### royaltyInfo
+## royaltyInfo
 
 ```solidity
 function royaltyInfo(uint256 _salePrice) external view virtual returns (address, uint256)
@@ -189,7 +187,7 @@ function royaltyInfo(uint256 _salePrice) external view virtual returns (address,
 
 Returns all the information about the payment of royalties
 
-### nftIdCounter
+## nftIdCounter
 
 ```solidity
 function nftIdCounter() external view returns (uint256)
@@ -198,7 +196,7 @@ function nftIdCounter() external view returns (uint256)
 Returns the id number of the last minted nft
         @dev The number of the id of the NFT goes from 0 to this number returned
 
-### updateRelease
+## updateRelease
 
 ```solidity
 function updateRelease() public
@@ -207,7 +205,7 @@ function updateRelease() public
 _The owner can increase the maximum supplement of the collection based on the stage of launch in which 
         the project is._
 
-### setRoyaltyFeesInPercentage
+## setRoyaltyFeesInPercentage
 
 ```solidity
 function setRoyaltyFeesInPercentage(uint8 _newRoyaltyFeesInPercentage) public
@@ -215,7 +213,7 @@ function setRoyaltyFeesInPercentage(uint8 _newRoyaltyFeesInPercentage) public
 
 _Allows the owner to modify the fee percentage for royalties_
 
-### setRoyaltyAddress
+## setRoyaltyAddress
 
 ```solidity
 function setRoyaltyAddress(address _newRoyaltyAddress) public
@@ -223,7 +221,7 @@ function setRoyaltyAddress(address _newRoyaltyAddress) public
 
 _Allows the owner to modify the address where the money from the royalty fees will be sent_
 
-### setBaseUri
+## setBaseUri
 
 ```solidity
 function setBaseUri(string _newBaseURI) public
@@ -231,7 +229,7 @@ function setBaseUri(string _newBaseURI) public
 
 _Allows the owner to modify the ISPF base URL for NFTs_
 
-### setPriceBuyToken
+## setPriceBuyToken
 
 ```solidity
 function setPriceBuyToken(uint256 _newPriceBuyToken) public
@@ -239,7 +237,7 @@ function setPriceBuyToken(uint256 _newPriceBuyToken) public
 
 _Allows the owner to modify the minting price of NFTs_
 
-### setPermitBurn
+## setPermitBurn
 
 ```solidity
 function setPermitBurn(bool _newStateToPermitBurn) public
@@ -247,7 +245,7 @@ function setPermitBurn(bool _newStateToPermitBurn) public
 
 _Allows the owner to modify the status of whether or not NFT burning is allowed_
 
-### setPermitMint
+## setPermitMint
 
 ```solidity
 function setPermitMint(bool _newStateToPermitMint) public
@@ -255,7 +253,7 @@ function setPermitMint(bool _newStateToPermitMint) public
 
 _Allows the owner to modify the status of whether or not NFT minting is allowed_
 
-### withdrawMoney
+## withdrawMoney
 
 ```solidity
 function withdrawMoney() public
@@ -263,7 +261,7 @@ function withdrawMoney() public
 
 _Allows the owner to withdraw the funds from the contract_
 
-### _calculateRoyalty
+## _calculateRoyalty
 
 ```solidity
 function _calculateRoyalty(uint256 _salePrice) internal view returns (uint256)
@@ -271,7 +269,7 @@ function _calculateRoyalty(uint256 _salePrice) internal view returns (uint256)
 
 _Calculate the royalty fee amount based on the sale price_
 
-### _requireMinted
+## _requireMinted
 
 ```solidity
 function _requireMinted(uint256 tokenId) internal view virtual
@@ -279,7 +277,7 @@ function _requireMinted(uint256 tokenId) internal view virtual
 
 _Check if the ID of an NFT has already been minted or not_
 
-### _supplementReadjustment
+## _supplementReadjustment
 
 ```solidity
 function _supplementReadjustment() internal
@@ -287,7 +285,7 @@ function _supplementReadjustment() internal
 
 _Reset nft supplement, when supplement is "<= 5000", minting nft until reaching 6000 nft supplement_
 
-### _mintForOwner
+## _mintForOwner
 
 ```solidity
 function _mintForOwner(uint256 _amountForMint) internal
