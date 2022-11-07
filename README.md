@@ -2,6 +2,12 @@
 
 Creation of a smart contract erc721 (Nft).
 
+## Documentation
+
+To understand the operation of each function of the contract, it is recommended to read its documentation, you can do this with this link:
+
+* [Project Documentation](https://github.com/Ljrr3045/ETSNL-NFT-Development/blob/master/docs/index.md)
+
 ## Useful commands
 
 ```
