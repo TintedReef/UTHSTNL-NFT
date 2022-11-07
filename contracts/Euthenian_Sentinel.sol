@@ -4,20 +4,28 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Euthenian_Sentinel is ERC721, Ownable{
 
     using Strings for uint256;
+    using Counters for Counters.Counter;
+
+    Counters.Counter private _tokenIds;
 
     bool public permitBurn;
     bool public permitMint;
     uint8 public royaltyFeesInPercentage;
     uint32 public maxTokenSupply;
-    uint32 public maxTokenForUser;
     uint32 public tokenSupply;
     address public royaltyAddress;
     string public baseURI;
     uint public priceBuyToken;
+
+//Enum
+
+    enum PresaleState {initialRelease, firstRelease, secondRelease}
+    PresaleState public presaleState;
 
 //Event
 
@@ -30,8 +38,6 @@ contract Euthenian_Sentinel is ERC721, Ownable{
     event changePriceBuyToken(uint _lastPriceBuyToken, uint _newPriceBuyToken);
     event changePermitBurn(bool _state);
     event changePermitMint(bool _state);
-    event changeMaxTokenForUser(uint32 _lastMaxTokenForUser, uint32 _newMaxTokenForUser);
-    event changeMaxTokenSupply(uint32 _lastMaxTokenSupply, uint32 _newMaxTokenSupply);
 
     event _withdrawMoney(address _user, uint _amount, uint _date);
 
@@ -64,10 +70,11 @@ contract Euthenian_Sentinel is ERC721, Ownable{
         address _royaltyAddress
     ) ERC721(_name, _symbol){
 
-        priceBuyToken = 0.5 ether;
-        maxTokenSupply = 10000;
-        maxTokenForUser = 10;
-        royaltyFeesInPercentage = 5;
+        presaleState = PresaleState.initialRelease;
+
+        priceBuyToken = 0.1 ether;
+        maxTokenSupply = 4000;
+        royaltyFeesInPercentage = 10;
 
         baseURI = _baseURI;
         royaltyAddress = _royaltyAddress;
@@ -95,27 +102,32 @@ contract Euthenian_Sentinel is ERC721, Ownable{
             (tokenSupply + _amountForMint) <= maxTokenSupply, 
             "Error: No can mint more token"
         );
-        require(
-            (balanceOf(msg.sender) + _amountForMint) <= maxTokenForUser, 
-            "Error: As a user reached the maximum token"
-        );
         
         uint _priceBuy = priceBuyToken * _amountForMint;
-        require(msg.value >= _priceBuy, "Error: No enough money for buy");
+        require(
+            msg.value >= _priceBuy, 
+            "Error: No enough money for buy"
+        );
 
         for( uint i = 0; i < _amountForMint; i++){
 
-            tokenSupply++;
-            _mint(msg.sender,tokenSupply);
+            uint256 _newItemId = _tokenIds.current();
+            _mint(msg.sender, _newItemId);
 
-            emit MINT(msg.sender, tokenSupply);
+            tokenSupply++;
+            _tokenIds.increment();
+
+            emit MINT(msg.sender, _newItemId);
         }
 
         if(msg.value > _priceBuy){
 
             uint _moneyToReturn = msg.value - _priceBuy;
             (bool success,) = msg.sender.call{ value: _moneyToReturn }("");
-            require(success, "Error: Refund failed");
+            require(
+                success, 
+                "Error: Refund failed"
+            );
         }
     }
 
@@ -127,19 +139,53 @@ contract Euthenian_Sentinel is ERC721, Ownable{
         );
 
         _burn(_tokenId);
+        tokenSupply--;
+
+        if(presaleState == PresaleState.secondRelease){
+            _supplementReadjustment();
+        }
 
         emit BURN(msg.sender, _tokenId);
     }
 
 //View Functions
 
-    ///@dev Returns all the information about the payment of royalties
+    ///@notice Returns all the information about the payment of royalties
     function royaltyInfo(uint256 _salePrice) external view virtual returns (address, uint256){
         
         return (royaltyAddress, _calculateRoyalty(_salePrice));
     }
 
+    /**
+        @notice Returns the id number of the last minted nft
+        @dev The number of the id of the NFT goes from 0 to this number returned
+     */
+    function nftIdCounter() external view returns(uint){
+        return (_tokenIds.current() - 1);
+    }
+
 //Only Owner Functions
+
+    /**
+        @dev The owner can increase the maximum supplement of the collection based on the stage of launch in which 
+        the project is.
+    */
+    function updateRelease() public onlyOwner {
+        require(
+            presaleState != PresaleState.secondRelease, 
+            "Error: The contract is already in the second stage of launch"
+        );
+
+        if(presaleState == PresaleState.initialRelease){
+
+            maxTokenSupply += 3000;
+            presaleState = PresaleState.firstRelease;
+        }else if(presaleState == PresaleState.firstRelease){
+
+            maxTokenSupply += 3000;
+            presaleState = PresaleState.secondRelease;
+        }
+    }
 
     ///@dev Allows the owner to modify the fee percentage for royalties
     function setRoyaltyFeesInPercentage(uint8 _newRoyaltyFeesInPercentage) public onlyOwner {
@@ -213,32 +259,6 @@ contract Euthenian_Sentinel is ERC721, Ownable{
         emit changePermitMint(permitMint);
     }
 
-    ///@dev Allows the owner to modify the maximum NFT that an address can have
-    function setMaxTokenForUser(uint32 _newMaxTokenForUser) public onlyOwner {
-        require(
-            (_newMaxTokenForUser > 0) && (_newMaxTokenForUser != maxTokenForUser), 
-            "Error: _newMaxTokenForUser is invalid"
-        );
-
-        uint32 _lastMaxTokenForUser = maxTokenForUser;
-        maxTokenForUser = _newMaxTokenForUser;
-
-        emit changeMaxTokenForUser(_lastMaxTokenForUser, maxTokenForUser);
-    }
-
-    ///@dev Allows the owner to modify the maximum NFT that can exist
-    function setMaxTokenSupply(uint32 _newMaxTokenSupply) public onlyOwner {
-        require(
-            (_newMaxTokenSupply > 0) && (_newMaxTokenSupply != maxTokenSupply), 
-            "Error: _newMaxTokenSupply is invalid"
-        );
-
-        uint32 _lastMaxTokenSupply = maxTokenSupply;
-        maxTokenSupply = _newMaxTokenSupply;
-
-        emit changeMaxTokenSupply(_lastMaxTokenSupply, maxTokenSupply);
-    }
-
     ///@dev Allows the owner to withdraw the funds from the contract
     function withdrawMoney() public onlyOwner {
         
@@ -263,5 +283,31 @@ contract Euthenian_Sentinel is ERC721, Ownable{
     ///@dev Check if the ID of an NFT has already been minted or not
     function _requireMinted(uint256 tokenId) internal view virtual {
         require(_exists(tokenId), "ERC721: invalid token ID");
+    }
+
+    /**
+        @dev Reset nft supplement, when supplement is "<= 5000", minting nft until reaching 6000 nft supplement
+    */
+    function _supplementReadjustment() internal {
+
+        if(tokenSupply <= 5000){
+            uint _amountForMint = 6000 - tokenSupply;
+            _mintForOwner(_amountForMint);
+        }
+    }
+
+    ///@dev Mint nft in the address of the contract owner
+    function _mintForOwner(uint _amountForMint) internal {
+
+        for( uint i = 0; i < _amountForMint; i++){
+
+            uint256 _newItemId = _tokenIds.current();
+            _mint(owner(), _newItemId);
+
+            tokenSupply++;
+            _tokenIds.increment();
+
+            emit MINT(owner(), _newItemId);
+        }
     }
 }

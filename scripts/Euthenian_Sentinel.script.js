@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 async function main() {
 
-  let royaltyAddress = "0x7beDA3197383B1AE4a36c0791bBaD34273975051";
+  let royaltyAddress = "0x6b54c177feAc40D6c5DE2042D33d30Ac5153d75a";
 
   const Euthenian_Sentinel = await ethers.getContractFactory("Euthenian_Sentinel");
   const euthenian_sentinel = await Euthenian_Sentinel.deploy(

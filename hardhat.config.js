@@ -38,8 +38,8 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
         blockNumber: 15912869,
       }
     },
-    rinkeby: {
-      url: process.env.RINKEBY_URL,
+    goerli: {
+      url: process.env.GOERLI_URL,
       accounts:{
         mnemonic: process.env.MNEMONIC
       },
@@ -59,7 +59,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   },
   etherscan: {
     apiKey: {
-      rinkeby: process.env.ETHERSCAN_API_KEY,
+      goerli: process.env.ETHERSCAN_API_KEY,
       polygonMumbai: process.env.POLYGONSCAN_API_KEY,
       polygon: process.env.POLYGONSCAN_API_KEY
     }
