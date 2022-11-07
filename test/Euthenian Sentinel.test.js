@@ -12,7 +12,7 @@ describe("Euthenian_Sentinel", function () {
         euthenian_sentinel = await Euthenian_Sentinel.deploy(
             "Euthenian Sentinel",
             "$ETSNL",
-            "AddressToIspf", 
+            "ipfs://example/", 
             owner.address
         );
     });

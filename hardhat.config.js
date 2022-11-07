@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
+require("solidity-docgen");
 require("dotenv").config();
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -28,7 +29,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
       version: "0.7.8"
     },
     {
-      version: "0.8.8"
+      version: "0.8.15"
     }]
   },
   networks: {
@@ -38,8 +39,8 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
         blockNumber: 15912869,
       }
     },
-    goerli: {
-      url: process.env.GOERLI_URL,
+    bsc_testnet: {
+      url: process.env.BSC_TESTNET,
       accounts:{
         mnemonic: process.env.MNEMONIC
       },
@@ -59,7 +60,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   },
   etherscan: {
     apiKey: {
-      goerli: process.env.ETHERSCAN_API_KEY,
+      bscTestnet: process.env.BSC_API_KEY,
       polygonMumbai: process.env.POLYGONSCAN_API_KEY,
       polygon: process.env.POLYGONSCAN_API_KEY
     }

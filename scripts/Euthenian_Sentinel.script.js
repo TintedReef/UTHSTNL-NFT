@@ -6,9 +6,9 @@ async function main() {
 
   const Euthenian_Sentinel = await ethers.getContractFactory("Euthenian_Sentinel");
   const euthenian_sentinel = await Euthenian_Sentinel.deploy(
-    "Euthenian_Sentinel",
+    "Euthenian Sentinel",
     "$ETSNL",
-    "AddressToIspf", 
+    "ipfs://example/", 
     royaltyAddress
   );
 
